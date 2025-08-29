@@ -4,7 +4,7 @@ import upath from 'upath';
 import * as fs from 'fs';
 
 class AppMenu extends BaseMenu {
-    name = 'echo';
+    name = 'voice';
 }
 
 const menu = new AppMenu();

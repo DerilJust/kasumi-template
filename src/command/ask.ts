@@ -9,17 +9,19 @@ const openai = new OpenAI({
 
 class Ask extends BaseCommand {
     name = "ask";
-    description = "ask ai something";
+    description = "问AI问题";
 
     func: CommandFunction<BaseSession, any> = async (session) => {
         if (session.args.length) {
+            const askContent = session.args.join(' ');
+            client.logger.info("User question:", askContent);
             const completion = await openai.chat.completions.create({
-                messages: [{ role: "system", content: "You are a helpful assistant." }],
-                model: "deepseek-chat",
+                messages: [{ role: "system", content: "你是一个聪明又可爱的助手，请用在番剧Mygo和Ave Mujica中千早爱音的风格回答我的问题" }, { role: "user", content: askContent }],
+                model: "deepseek-reasoner",
             });
-            console.log(completion.choices[0].message.content);
-            await session.send(completion.choices[0].message.content as string);
-            console.log(session.args);
+            const answer = completion.choices[0].message.content || "对不起，我无法回答你的问题。";
+            client.logger.info('AI answer:', answer);
+            await session.send(answer);
         }
     }
 }

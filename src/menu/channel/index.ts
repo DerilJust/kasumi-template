@@ -2,10 +2,9 @@ import { client } from "init/client";
 import { BaseMenu } from "kasumi.js";
 import upath from 'upath';
 import * as fs from 'fs';
-import './event';
 
 class AppMenu extends BaseMenu {
-    name = 'hello';
+    name = 'channel';
 }
 
 const menu = new AppMenu();

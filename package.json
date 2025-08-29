@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node --nolazy -r ts-node/register -r tsconfig-paths/register src/index.ts",
-    "dev": "node --nolazy -r ts-node/register -r tsconfig-paths/register src/index.ts",
+    "start:pretty": "node --nolazy -r ts-node/register -r tsconfig-paths/register src/index.ts | pino-pretty --colorize -i v",
     "pm2": "node src/pm2/index.js"
   },
   "repository": {
@@ -25,13 +25,14 @@
   "homepage": "https://github.com/HexaNona/kasumi-template#readme",
   "dependencies": {
     "dotenv": "^17.2.1",
-    "kasumi.js": "^0.6.0",
+    "kasumi.js": "^0.7.1",
     "openai": "^5.16.0",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2",
     "upath": "^2.0.1"
   },
   "devDependencies": {
+    "pino-pretty": "^13.1.1",
     "ts-node-dev": "^2.0.0"
   }
 }
