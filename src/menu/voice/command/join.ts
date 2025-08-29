@@ -16,7 +16,7 @@ const listChannel = async (session: BaseSession, page: number) => {
     client.logger.info("Channel List...");
     const guildId = process.env.GUILD_ID || '';
     if (guildId) {
-        for await (const { err, data } of client.API.channel.list(guildId, "voice", page, 10)) {
+        for await (const { err, data } of client.API.channel.list(guildId, "voice", page, 8)) {
             if (err) {
                 client.logger.error(guildId);
                 if (err.message.includes("40000")) {

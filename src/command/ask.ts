@@ -15,13 +15,24 @@ class Ask extends BaseCommand {
         if (session.args.length) {
             const askContent = session.args.join(' ');
             client.logger.info("User question:", askContent);
-            const completion = await openai.chat.completions.create({
+            const stream = await openai.chat.completions.create({
                 messages: [{ role: "system", content: "你是一个聪明又可爱的助手，请用在番剧Mygo和Ave Mujica中千早爱音的风格回答我的问题" }, { role: "user", content: askContent }],
                 model: "deepseek-reasoner",
+                stream: true,
             });
-            const answer = completion.choices[0].message.content || "对不起，我无法回答你的问题。";
-            client.logger.info('AI answer:', answer);
-            await session.send(answer);
+            for await (const chunk of stream) {
+                const content = chunk.choices?.[0]?.delta?.content;
+                client.logger.info('AI answer:', content);
+                if (content) process.stdout.write(content);
+            }
+            // const answer = completion.choices[0].message.content || "对不起，我无法回答你的问题。";
+            // client.logger.info('AI answer:', answer);
+            // const { err, data } = await session.send(answer);
+            // if (err) {
+            //     client.logger.error('Error sending message:', err);
+            // } else {
+
+            // }
         }
     }
 }

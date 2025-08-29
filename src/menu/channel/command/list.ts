@@ -15,7 +15,7 @@ const listChannel: CommandFunction<BaseSession, any> = async (session) => {
     const guildId = process.env.GUILD_ID || '';
     if (guildId) {
         const page = 1;
-        const pageSize = 20;
+        const pageSize = 10;
         for await (const { err, data } of client.API.channel.list(guildId, "voice", page, pageSize)) {
             if (err) {
                 client.logger.error(guildId);
