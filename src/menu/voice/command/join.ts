@@ -55,7 +55,7 @@ const createCard = (data: Type.MultiPageResponse<Type.BriefChannel>) => {
 
     card.addText(`当前第 ${currentPage} 页，共 ${totalPages} 页。`);
 
-    const buttonLast: Card.Parts.Button = {
+    const buttonLast = {
         type: Card.Parts.AccessoryType.BUTTON,
         text: {
             type: Card.Parts.TextType.PLAIN_TEXT,
@@ -106,7 +106,7 @@ const createCard = (data: Type.MultiPageResponse<Type.BriefChannel>) => {
         //         click: Card.Parts.ButtonClickType.RETURN_VALUE,
         //     },
         // ]
-        elements: [buttonLast],
+        elements: buttons as any,
     })
     return card;
 }
