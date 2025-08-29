@@ -1,10 +1,12 @@
 import dotenv from 'dotenv';
+
+dotenv.config();
+
 import { client } from "init/client";
 import * as fs from 'fs';
 import upath from 'upath';
 import './event';
 
-dotenv.config();
 (async () => {
     await client.connect()
     const menuPath = upath.join(__dirname, 'menu');

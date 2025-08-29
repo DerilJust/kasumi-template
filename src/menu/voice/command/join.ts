@@ -8,11 +8,11 @@ class Join extends BaseCommand {
     func: CommandFunction<BaseSession, any> = async (session) => {
         client.logger.info("Voice Join...");
         const page = 1;
-        listChannel(session, page, 0);
+        listChannel(session, page);
     }
 }
 
-const listChannel = async (session: BaseSession, page: number, pageTotal: number) => {
+const listChannel = async (session: BaseSession, page: number) => {
     client.logger.info("Channel List...");
     const guildId = process.env.GUILD_ID || '';
     if (guildId) {
@@ -42,7 +42,7 @@ const createCard = (data: Type.MultiPageResponse<Type.BriefChannel>) => {
         card.addTextWithButton(`${channel.name} (${channel.id})`, {
             buttonContent: "加入",
             theme: Card.Theme.PRIMARY,
-            value: channel.id,
+            value: ["joinChannel", channel.id].join(','),
             click: Card.Parts.ButtonClickType.RETURN_VALUE,
         });
     });
@@ -50,8 +50,8 @@ const createCard = (data: Type.MultiPageResponse<Type.BriefChannel>) => {
     const currentPage = data.meta.page;
     const totalPages = data.meta.page_total;
 
-    const pageInfoLast = ["listJoinChannelLast", String(currentPage), String(totalPages)].join(',');
-    const pageInfoNext = ["listJoinChannelNext", String(currentPage), String(totalPages)].join(',');
+    const pageInfoLast = ["listJoinChannelLast", String(currentPage)].join(',');
+    const pageInfoNext = ["listJoinChannelNext", String(currentPage)].join(',');
 
     card.addText(`当前第 ${currentPage} 页，共 ${totalPages} 页。`);
 
@@ -75,6 +75,7 @@ const createCard = (data: Type.MultiPageResponse<Type.BriefChannel>) => {
         value: pageInfoNext,
         click: Card.Parts.ButtonClickType.RETURN_VALUE,
     }
+
     var buttons = [buttonLast, buttonNext];
     if (currentPage <= 1) {
         buttons = [buttonNext]
@@ -82,30 +83,12 @@ const createCard = (data: Type.MultiPageResponse<Type.BriefChannel>) => {
     if (currentPage >= totalPages) {
         buttons = [buttonLast]
     }
+    if (currentPage == 1 && totalPages == 1) {
+        buttons = []
+    }
+
     card.addModule({
         type: Card.Modules.Types.ACTION_GROUP,
-        // elements: [
-        //     {
-        //         type: Card.Parts.AccessoryType.BUTTON,
-        //         text: {
-        //             type: Card.Parts.TextType.PLAIN_TEXT,
-        //             content: "上一页",
-        //         },
-        //         theme: Card.Theme.INFO,
-        //         value: pageInfoLast,
-        //         click: Card.Parts.ButtonClickType.RETURN_VALUE,
-        //     },
-        //     {
-        //         type: Card.Parts.AccessoryType.BUTTON,
-        //         text: {
-        //             type: Card.Parts.TextType.PLAIN_TEXT,
-        //             content: "下一页",
-        //         },
-        //         theme: Card.Theme.INFO,
-        //         value: pageInfoNext,
-        //         click: Card.Parts.ButtonClickType.RETURN_VALUE,
-        //     },
-        // ]
         elements: buttons as any,
     })
     return card;
