@@ -1,14 +1,25 @@
-import { BaseCommand, CommandFunction, BaseSession } from 'kasumi.js';
+import { BaseCommand, CommandFunction, BaseSession, Card } from 'kasumi.js';
 import { client } from "init/client";
+import { Bilibili } from '@/util/bilibili';
 
 class Summon extends BaseCommand {
     name = 'summon';
-    description = '召唤AI进入频道';
-    
+    description = 'Test';
+
     func: CommandFunction<BaseSession, any> = async (session) => {
         if (session.args.length) {
-            await session.send(session.args.join(' '));
-            console.log(session.args);
+            const data = await Bilibili.getLiveRoomInfo(parseInt(session.args[0]));
+            client.logger.info("Bilibili Room Info:", data);
+            const card = new Card({
+                type: "card",
+                theme: Card.Theme.INFO,
+                size: Card.Size.LARGE,
+            });
+            card.addContext()
         }
     }
 }
+
+const command = new Summon();
+client.plugin.load(command);
+export default command;

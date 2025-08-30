@@ -24,6 +24,8 @@
   },
   "homepage": "https://github.com/HexaNona/kasumi-template#readme",
   "dependencies": {
+    "alibabacloud-nls": "^1.0.4",
+    "axios": "^1.11.0",
     "dotenv": "^17.2.1",
     "kasumi.js": "^0.7.1",
     "openai": "^5.16.0",

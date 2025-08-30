@@ -7,7 +7,3 @@ chcp 65001
 FFmpeg
 
 https://ffmpeg.org/download.html
-
-PowerShell
-
-[Environment]::SetEnvironmentVariable("Path", "$env:Path;C:\ffmpeg\bin", "Machine")

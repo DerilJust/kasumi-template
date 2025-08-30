@@ -1,16 +1,6 @@
-import { client } from "init/client";
 import { spawn } from 'child_process';
 import * as fs from 'fs';
-
-export interface IAudioJoinResponse {
-    ip: string;
-    port: string;
-    rtcp_port: string;
-    rtcp_mux: boolean;
-    bitrate: number;
-    audio_ssrc: string;
-    audio_pt: string;
-}
+import { IAudioJoinResponse } from '../types';
 
 export default class VoiceClient {
     ip: string;

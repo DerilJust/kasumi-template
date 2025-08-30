@@ -1,6 +1,7 @@
 import { client } from "init/client";
 import { BaseCommand, BaseSession, Card, CommandFunction, Type } from "kasumi.js";
 import menu from "..";
+import { addPageButton } from "@/util/addPageButton";
 
 class Join extends BaseCommand {
     name = 'join';
@@ -18,21 +19,19 @@ const listChannel = async (session: BaseSession, page: number) => {
     if (guildId) {
         for await (const { err, data } of client.API.channel.list(guildId, "voice", page, 8)) {
             if (err) {
-                client.logger.error(guildId);
                 if (err.message.includes("40000")) {
                     break;
                 }
                 client.logger.error(err);
                 break;
             }
-            // client.logger.info("channel data", data);
             session.send(createCard(data));
         }
     }
 }
 
 const createCard = (data: Type.MultiPageResponse<Type.BriefChannel>) => {
-    const card = new Card({
+    var card = new Card({
         type: "card",
         theme: Card.Theme.INFO,
         size: Card.Size.LARGE,
@@ -47,50 +46,7 @@ const createCard = (data: Type.MultiPageResponse<Type.BriefChannel>) => {
         });
     });
 
-    const currentPage = data.meta.page;
-    const totalPages = data.meta.page_total;
-
-    const pageInfoLast = ["listJoinChannelLast", String(currentPage)].join(',');
-    const pageInfoNext = ["listJoinChannelNext", String(currentPage)].join(',');
-
-    card.addText(`当前第 ${currentPage} 页，共 ${totalPages} 页。`);
-
-    const buttonLast = {
-        type: Card.Parts.AccessoryType.BUTTON,
-        text: {
-            type: Card.Parts.TextType.PLAIN_TEXT,
-            content: "上一页",
-        },
-        theme: Card.Theme.INFO,
-        value: pageInfoLast,
-        click: Card.Parts.ButtonClickType.RETURN_VALUE,
-    }
-    const buttonNext = {
-        type: Card.Parts.AccessoryType.BUTTON,
-        text: {
-            type: Card.Parts.TextType.PLAIN_TEXT,
-            content: "下一页",
-        },
-        theme: Card.Theme.INFO,
-        value: pageInfoNext,
-        click: Card.Parts.ButtonClickType.RETURN_VALUE,
-    }
-
-    var buttons = [buttonLast, buttonNext];
-    if (currentPage <= 1) {
-        buttons = [buttonNext]
-    }
-    if (currentPage >= totalPages) {
-        buttons = [buttonLast]
-    }
-    if (currentPage == 1 && totalPages == 1) {
-        buttons = []
-    }
-
-    card.addModule({
-        type: Card.Modules.Types.ACTION_GROUP,
-        elements: buttons as any,
-    })
+    card = addPageButton(card, { page: data.meta.page, page_total: data.meta.page_total }, ['listJoinChannelLast', 'listJoinChannelNext']);
     return card;
 }
 

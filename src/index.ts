@@ -6,6 +6,7 @@ import { client } from "init/client";
 import * as fs from 'fs';
 import upath from 'upath';
 import './event';
+import './bot'
 
 (async () => {
     await client.connect()
