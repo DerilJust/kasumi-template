@@ -2,11 +2,12 @@ import { BaseCommand, CommandFunction, BaseSession } from 'kasumi.js';
 import { client } from "init/client";
 import OpenAI from "openai";
 import { aliTTSClient } from '@/util/aliTTSClient';
-import VoiceClient from '@/voiceClient/voiceClient';
+import { voiceBot } from '@/bot/voiceBot';
+import upath from 'upath';
 
 const openai = new OpenAI({
     baseURL: 'https://api.deepseek.com',
-    apiKey: 'sk-39f35b37368c4b0aa338331bdb769fc0'
+    apiKey: process.env.OPENAI_API_KEY,
 });
 
 class Ask extends BaseCommand {
@@ -35,9 +36,10 @@ class Ask extends BaseCommand {
                     }
                 }
                 const fullMessage = stringBuilder.join('');
+                console.log('Full AI answer:', fullMessage);
                 session.update(messageId, fullMessage);
                 await aliTTSClient.startTTs(fullMessage);
-                // TODO: 播放语音
+                await voiceBot.sendAudio(upath.join(__dirname, '..','audio','ttsAudio.wav'));
             }
         }
     }
