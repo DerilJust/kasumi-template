@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
-import { HttpClientConfig, RequestOptions } from '../types';
+import { HttpClientConfig } from '../types';
 
 export class HttpClient {
     private instance: AxiosInstance;
@@ -43,13 +43,8 @@ export class HttpClient {
         );
     }
 
-    async get<T>(url: string, options?: RequestOptions): Promise<T> {
+    async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
         try {
-            const config: AxiosRequestConfig = {
-                params: options?.params,
-                headers: options?.headers,
-            };
-
             const response = await this.instance.get(url, config);
             return response.data;
         } catch (error) {
@@ -58,12 +53,8 @@ export class HttpClient {
         }
     }
 
-    async post<T>(url: string, data?: any, options?: RequestOptions): Promise<T> {
+    async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
         try {
-            const config: AxiosRequestConfig = {
-                headers: options?.headers,
-            };
-
             const response = await this.instance.post(url, data, config);
             return response.data;
         } catch (error) {

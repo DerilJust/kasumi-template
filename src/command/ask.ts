@@ -1,6 +1,8 @@
 import { BaseCommand, CommandFunction, BaseSession } from 'kasumi.js';
 import { client } from "init/client";
 import OpenAI from "openai";
+import { aliTTSClient } from '@/util/aliTTSClient';
+import VoiceClient from '@/voiceClient/voiceClient';
 
 const openai = new OpenAI({
     baseURL: 'https://api.deepseek.com',
@@ -32,7 +34,10 @@ class Ask extends BaseCommand {
                         client.logger.info('AI answer:', content);
                     }
                 }
-                session.update(messageId, stringBuilder.join(''));
+                const fullMessage = stringBuilder.join('');
+                session.update(messageId, fullMessage);
+                await aliTTSClient.startTTs(fullMessage);
+                // TODO: 播放语音
             }
         }
     }

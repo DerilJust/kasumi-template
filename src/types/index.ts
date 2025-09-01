@@ -44,12 +44,6 @@ export interface HttpClientConfig {
     headers?: Record<string, string>;
 }
 
-// HTTP请求选项类型
-export interface RequestOptions {
-    params?: Record<string, any>;
-    headers?: Record<string, string>;
-}
-
 // KOOK消息类型
 export interface KookMessage {
     content: string;
