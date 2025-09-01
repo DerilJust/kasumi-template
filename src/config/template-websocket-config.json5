@@ -1,6 +1,6 @@
 {
     "kasumi::config.disableSnOrderCheck": true,
-    "kasumi::config.token": "1/Mzk1NTc=/hSh8bWpZY+oExAy0JnYeiw==",
+    "kasumi::config.token": "your token here",
     "kasumi::config.connection": "kookts",
 
     "kasumi::middleware.accessControl.userGroup.enable": true,

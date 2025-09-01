@@ -5,3 +5,5 @@ src/config/config.json5
 test/
 
 .env
+
+note.txt
