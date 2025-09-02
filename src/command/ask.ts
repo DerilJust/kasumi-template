@@ -4,6 +4,7 @@ import OpenAI from "openai";
 import { aliTTSClient } from '@/util/aliTTSClient';
 import { voiceBot } from '@/bot/voiceBot';
 import upath from 'upath';
+import { ChatCompletionMessageParam } from 'openai/resources';
 
 const openai = new OpenAI({
     baseURL: 'https://api.deepseek.com',
@@ -18,8 +19,11 @@ class Ask extends BaseCommand {
         if (session.args.length) {
             const askContent = session.args.join(' ');
             client.logger.info("User question:", askContent);
+            let message: Array<ChatCompletionMessageParam> = [{
+                role: "system", content: "你是一个聪明又可爱的助手，请模仿在番剧Mygo和Ave Mujica中千早爱音(Anon Chihaya)的风格并使用中文回答我的问题"
+            }, { role: "user", content: askContent }]
             const stream = await openai.chat.completions.create({
-                messages: [{ role: "system", content: "你是一个聪明又可爱的助手，请模仿在番剧Mygo和Ave Mujica中千早爱音(Anon Chihaya)的风格并使用中文回答我的问题" }, { role: "user", content: askContent }],
+                messages: message,
                 model: "deepseek-reasoner",
                 stream: true,
             });
@@ -36,13 +40,38 @@ class Ask extends BaseCommand {
                     }
                 }
                 const fullMessage = stringBuilder.join('');
-                console.log('Full AI answer:', fullMessage);
+                client.logger.info('Full AI answer:', fullMessage);
                 session.update(messageId, fullMessage);
-                await aliTTSClient.startTTs(fullMessage);
-                await voiceBot.sendAudio(upath.join(__dirname, '..','audio','ttsAudio.wav'));
+
+                message.push({ role: "assistant", content: fullMessage });
+                message.push({ role: "user", content: "请根据这篇文章（https://help.aliyun.com/zh/isi/developer-reference/ssml-overview?spm=a2c4g.11186623.0.0.79761d63iPZext#title-i3w-j10-5yw），生成你刚刚的回答的SSML标记语言版本，包括合适的断句分词方式、发音、速度、停顿、声调。" });
+                const ttsAsk = await openai.chat.completions.create({
+                    messages: message,
+                    model: "deepseek-reasoner",
+                });
+
+                const ttsContext = ttsAsk.choices?.[0]?.message?.content || '';
+                client.logger.info('TTS SSML:', ttsContext);
+
+                const extractedXml = extractXmlFromMarkdown(ttsContext);
+
+                if (extractedXml.length > 0) {
+                    await aliTTSClient.startTTs(extractedXml);
+                    await voiceBot.sendAudio(upath.join(__dirname, '..', 'audio', 'ttsAudio.wav'));
+                }
             }
         }
     }
+}
+
+const extractXmlFromMarkdown = (text: string): string => {
+    const regex = /```xml\s+([\s\S]*?)```/;
+    const match = regex.exec(text);
+
+    if (match && match[1]) {
+        return match[1].trim();
+    }
+    return '';
 }
 
 const command = new Ask();

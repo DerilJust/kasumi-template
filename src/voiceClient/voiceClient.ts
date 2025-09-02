@@ -1,6 +1,7 @@
 import { spawn } from 'child_process';
 import * as fs from 'fs';
 import { IAudioJoinResponse } from '../types';
+import { client } from '@/init/client';
 
 export default class VoiceClient {
     ip: string;
@@ -62,16 +63,16 @@ export default class VoiceClient {
             const ffmpegProcess = spawn('ffmpeg', args);
 
             ffmpegProcess.stdout.on('data', (data) => {
-                console.log(`FFmpeg stdout: ${data}`);
+                // client.logger.info(`FFmpeg stdout: ${data}`);
             });
 
             ffmpegProcess.stderr.on('data', (data) => {
-                console.error(`FFmpeg stderr: ${data}`);
+                // client.logger.error(`FFmpeg stderr: ${data}`);
             });
 
             ffmpegProcess.on('close', (code) => {
                 if (code === 0) {
-                    console.log('FFmpeg process completed successfully');
+                    client.logger.info('FFmpeg process completed successfully');
                     resolve();
                 } else {
                     reject(new Error(`FFmpeg process exited with code ${code}`));

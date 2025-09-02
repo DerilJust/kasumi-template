@@ -33,10 +33,11 @@ class AliTTSClient {
     }
 
     async startTTs(text: string): Promise<void> {
-        const textUrlEncode = encodeURIComponent(text)
-            .replace(/[!'()*]/g, function (c) {
-                return '%' + c.charCodeAt(0).toString(16);
-            });
+        // Get方法，需要再采用RFC 3986规范进行urlencode编码
+        // const textUrlEncode = encodeURIComponent(text)
+        //     .replace(/[!'()*]/g, function (c) {
+        //         return '%' + c.charCodeAt(0).toString(16);
+        //     });
 
         const audioSaveFile = upath.join(__dirname, '..', 'audio', 'ttsAudio.wav');
 
@@ -48,7 +49,7 @@ class AliTTSClient {
         const task = {
             appkey: this.appKey,
             token: this.token,
-            text: textUrlEncode,
+            text: text,
             format: 'wav',
             sample_rate: 16000
         };
