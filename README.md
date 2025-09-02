@@ -43,3 +43,10 @@ cp template-websocket-config.json5 config.json5
 ```bash
 npm run start:pretty
 ```
+## 使用PM2启动
+```bash
+# 启动
+npm run pm2
+# 查看log
+pm2 monit <your app name>
+```

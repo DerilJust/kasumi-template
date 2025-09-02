@@ -8,4 +8,4 @@ const pro = spawn("pm2", [
     upath.join(__dirname, 'pm2-windows.js'),
     `--name=${pkg.name}`,
     ...process.argv.splice(2)
-], { windowsHide: true, stdio: 'inherit' });
+], { windowsHide: true, stdio: 'inherit', shell: true });
