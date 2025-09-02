@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import { HttpClientConfig } from '../types';
+import { client } from '@/init/client';
 
 export class HttpClient {
     private instance: AxiosInstance;
@@ -21,11 +22,11 @@ export class HttpClient {
         // 请求拦截器
         this.instance.interceptors.request.use(
             (config: InternalAxiosRequestConfig) => {
-                console.log(`发起请求: ${config.method?.toUpperCase()} ${config.url}`);
+                // client.logger.info(`发起请求: ${config.method?.toUpperCase()} ${config.url}`);
                 return config;
             },
             (error) => {
-                console.error('请求错误:', error.message);
+                client.logger.error('请求错误:', error.message);
                 return Promise.reject(error);
             }
         );
@@ -33,11 +34,11 @@ export class HttpClient {
         // 响应拦截器
         this.instance.interceptors.response.use(
             (response: AxiosResponse) => {
-                console.log(`收到响应: ${response.status} ${response.statusText}`);
+                // client.logger.info(`收到响应: ${response.status} ${response.statusText}`);
                 return response;
             },
             (error) => {
-                console.error('响应错误:', error.message);
+                client.logger.error('响应错误:', error.message);
                 return Promise.reject(error);
             }
         );
@@ -48,7 +49,7 @@ export class HttpClient {
             const response = await this.instance.get(url, config);
             return response.data;
         } catch (error) {
-            console.error(`GET请求失败: ${url}`, error);
+            client.logger.error(`GET请求失败: ${url} ${error}`);
             throw error;
         }
     }
@@ -58,7 +59,7 @@ export class HttpClient {
             const response = await this.instance.post(url, data, config);
             return response.data;
         } catch (error) {
-            console.error(`POST请求失败: ${url}`, error);
+            client.logger.error(`POST请求失败: ${url} ${error}`);
             throw error;
         }
     }

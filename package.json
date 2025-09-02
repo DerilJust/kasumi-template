@@ -1,8 +1,8 @@
 {
   "name": "kasumi-template",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Template for Kasumi",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "start": "node --nolazy -r ts-node/register -r tsconfig-paths/register src/index.ts",
     "start:pretty": "node --nolazy -r ts-node/register -r tsconfig-paths/register src/index.ts | pino-pretty --colorize -i v",
@@ -29,6 +29,7 @@
     "dotenv": "^17.2.1",
     "kasumi.js": "^0.7.1",
     "openai": "^5.16.0",
+    "pm2": "^6.0.9",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2",
     "upath": "^2.0.1"
