@@ -1,4 +1,4 @@
-import { BaseSession, Card, PlainTextMessageEvent } from 'kasumi.js';
+import { Card, MessageType } from 'kasumi.js';
 import { client } from "init/client";
 import { Bilibili } from '@/util/bilibili';
 import { LiveRoomInfo } from '@/types';
@@ -7,6 +7,7 @@ export default class Bot {
     data: LiveRoomInfo;
     name: string;
     channelId: string;
+    startTime: number | null = null;
     private intervalId: NodeJS.Timeout | null = null;
 
     constructor(data: LiveRoomInfo, name: string) {
@@ -46,6 +47,14 @@ export default class Bot {
     }
 
     /**
+     * 测试方法，用于手动触发
+     */
+    async test(): Promise<void> {
+        const currentStatus = await Bilibili.getLiveRoomInfo(this.data.room_id);
+        this.sendLiveNotification(currentStatus);
+    }
+
+    /**
      * 检查直播间状态
      */
     private async checkLiveStatus(): Promise<void> {
@@ -81,19 +90,23 @@ export default class Bot {
             const title = roomInfo.title || '未知标题';
             const uname = this.name || '未知主播';
             const liveUrl = `https://live.bilibili.com/${roomInfo.room_id}`;
+            this.startTime = Date.now();
 
             const card = new Card()
                 .setSize(Card.Size.LARGE)
                 .setTheme(Card.Theme.INFO)
-                .addTitle(`${uname} 开播啦！主题: ${title}`)
-                .addImage(roomInfo.cover)
+                .addTitle(`${uname} 开播啦！标题: ${title}`)
+                .addImage(roomInfo.user_cover)
                 .addText(`[点击进入直播间](${liveUrl})`);
 
-            const event = new PlainTextMessageEvent({} as any, client);
-            event.channelId = this.channelId;
-            new BaseSession([], event, client).send(card);
+            const { data, err } = await client.API.message.create(MessageType.CardMessage, this.channelId, card);
 
-            client.logger.info(`已发送开播通知: ${uname} - ${title}`);
+            if (data) {
+                client.logger.info(`已发送开播通知: ${uname} - ${title}`);
+            } else {
+                client.logger.error(err);
+            }
+
         } catch (error) {
             client.logger.error(`发送开播通知时出错: ${error}`);
         }
@@ -111,15 +124,19 @@ export default class Bot {
                 .setSize(Card.Size.LARGE)
                 .setTheme(Card.Theme.INFO)
                 .addTitle(`${uname} 下播啦！主题: ${title}`)
-                .addImage(roomInfo.cover)
+                .addImage(roomInfo.user_cover)
+                .addText(`本次直播持续了: ${this.startTime ? Math.floor((Date.now() - this.startTime) / 60000) : '未知'} 分钟`);
 
-            const event = new PlainTextMessageEvent({} as any, client);
-            event.channelId = this.channelId;
-            new BaseSession([], event, client).send(card);
+            const { data, err } = await client.API.message.create(MessageType.CardMessage, this.channelId, card);
 
-            client.logger.info(`已发送开播通知: ${uname} - ${title}`);
+            if (data) {
+                client.logger.info(`已发送下播通知: ${uname} - ${title}`);
+            } else {
+                client.logger.error(err);
+            }
+
         } catch (error) {
-            client.logger.error(`发送开播通知时出错: ${error}`);
+            client.logger.error(`发送下播通知时出错: ${error}`);
         }
     }
 

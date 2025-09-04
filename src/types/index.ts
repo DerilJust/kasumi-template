@@ -12,7 +12,7 @@ export interface LiveRoomInfo {
     room_id: number;
     short_id: number;
     title: string;
-    cover: string;
+    user_cover: string;
     tags: string;
     background: string;
     description: string;
